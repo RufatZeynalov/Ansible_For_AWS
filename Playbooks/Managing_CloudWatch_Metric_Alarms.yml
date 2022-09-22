@@ -1,0 +1,29 @@
+---
+- hosts
+  gather_facts: no
+  vars_filter:
+    - keys.yml
+  tasks:
+    - name: Remove Alarm
+      ec2_metric_alarm:
+        name: "cpu-low"
+        state: absent		
+	aws_access_key: "{{ AWS_ACCESS_KEY_ID }}"
+	aws_secret_key: "{{ AWS_SECRET_ACCESS_KEY }}"
+	ec2_region: "{{ AWS_REGION }}"
+    - name: create alarm
+      ec2_metric_alarm:
+	aws_access_key: "{{ AWS_ACCESS_KEY_ID }}"
+	aws_secret_key: "{{ AWS_SECRET_ACCESS_KEY }}"
+	ec2_region: "{{ AWS_REGION }}"
+	state: present
+	name: "cpu-high"
+	metric: "CPUUtilization"
+	namespace: "AWS/EC2"
+	statistic: Average
+	comparison: ">="
+	treshold: 90.0
+	period: 300
+	evaluation_periods: 3 
+	unit: "Percent" 
+	dimensions: {'InstanceId':'i-008f844965363a32'}
